@@ -23,5 +23,5 @@ class TrackImporter:
                 elif fileline[i][j] == '.':
                     row.append(-1)
                 elif fileline[i][j] == 'F':
-                    row.append(1)
+                    row.append(0)
             track.append(row)
