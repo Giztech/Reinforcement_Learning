@@ -11,7 +11,6 @@ class TrackImporter:
         fileline = fileline[1:]
         for i in range(len(fileline)):
             row = []
-            print(fileline[i])
             if not fileline[i]:
                 continue
             for j in range(len(fileline[i])):
@@ -25,3 +24,4 @@ class TrackImporter:
                 elif fileline[i][j] == 'F':
                     row.append(1)
             track.append(row)
+        return track, startlist

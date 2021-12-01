@@ -1,7 +1,9 @@
 
+#alpha
+
 class SARSA:
     def __init__(self):
-        pass
+        self.learningRate = .1 #TUNE <.1
 
     def sarsa(self, percept):
         return action
