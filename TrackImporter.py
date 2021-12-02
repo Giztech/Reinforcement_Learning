@@ -3,6 +3,8 @@ class TrackImporter:
     def __init__(self, file):
         self.file_name = file
 
+
+
     def importTrack(self):
         file = open(self.file_name, 'r')  # opens file
         fileline = file.read().split('\n') #split on line
@@ -26,4 +28,6 @@ class TrackImporter:
                     row.append(0)
             track.append(row)
         return track, startlist, size
+
+
 
