@@ -10,7 +10,7 @@ class ValueIteration:
 
         #AIMA CODE
         '''
-         U1 = {s: 0 for s in MDP.states}
+        U1 = {s: 0 for s in MDP.states}
         R, T, discount = MDP.R, MDP.T, MDP.discount
         while True:
             U = U1.copy()
