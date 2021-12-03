@@ -17,7 +17,7 @@ class Simulator:
         self.start = start
         self.velocity = velocity
         self.timestep = 0
-        self.position = rand.choice(track.start)
+        self.position = rand.choice(start)
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
         self.reward = -1
@@ -70,7 +70,6 @@ class Simulator:
 
 
         return self.mdp.R(self.position)
-
 
     def goSARSA(self):
         sarsa = SARSA(self.mdp)

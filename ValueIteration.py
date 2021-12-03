@@ -4,21 +4,24 @@ class ValueIteration:
 
     def valueIteration(self, MDP, epsilon=0.01):
 
-        U1 = {s: 0 for s in MDP.states}
+        # Copies all states into Utiliy Function
+        Util1 = {s: 0 for s in MDP.states}
         Rewards, Transitions, discount = MDP.Rewards, MDP.Transitions, MDP.discount
 
         while True:
-            U = U1.copy()
+            # Copies the Utility function each time it loops
+            Util = Util1.copy()
             delta = 0
+            # Maximizes the Utility while staying with the bounds of epsilon and gamma
             for s in MDP.states:
-                U1[s] = Rewards(s) + discount * max(sum(p * U[s1] for (p, s1) in Transitions(s, a)) for a in MDP.actions(s))
-                delta = max(delta, abs(U1[s] - U[s]))
+                Util1[s] = Rewards(s) + discount * max(
+                    sum(p * Util[s1] for (p, s1) in Transitions(s, a)) for a in MDP.actions(s))
+                delta = max(delta, abs(Util1[s] - Util[s]))
             if delta <= epsilon * (1 - discount) / discount:
-                return U
+                return Util
 
     def maximizePolicy(self, MDP, U):
-        pi = {}
+        policy = {}
         for s in MDP.states:
-            pi[s] = max(MDP.actions(s), key=lambda a: sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a)))
-        return pi
-
+            policy[s] = max(MDP.actions(s), key=lambda a: sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a)))
+        return policy
