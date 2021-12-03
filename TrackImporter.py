@@ -1,9 +1,8 @@
+import copy
 
 class TrackImporter:
     def __init__(self, file):
         self.file_name = file
-
-
 
     def importTrack(self):
         file = open(self.file_name, 'r')  # opens file
@@ -21,13 +20,15 @@ class TrackImporter:
                    startlist.append([i, j])
                    row.append(-1)
                 elif fileline[i][j] == '#':
-                    row.append(None)
+                    row.append('#')
                 elif fileline[i][j] == '.':
                     row.append(-1)
                 elif fileline[i][j] == 'F':
                     row.append(0)
             track.append(row)
+
         return track, startlist, size
+
 
 
 
