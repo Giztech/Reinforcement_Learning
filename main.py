@@ -8,11 +8,11 @@ def main():
     track, start, size = ti.importTrack()
 
     mdp = MDP(size, track)
-    sim = Simulator(track, start, [0,0], mdp, size, False)
+    sim = Simulator(track, start, [0, 0], mdp, size, False)
 
-    #sim.callSARSA()
+    # sim.goSARSA()
 
-    #sim.print_track()
+    sim.print_track()
     sim.callValueIteration()
 
 if __name__ == '__main__':
