@@ -10,8 +10,8 @@ def main():
     sim = Simulator(track, start, [0,0], mdp)
     sim.callSARSA()
 
-    vi = ValueIteration
-    vi.maximizePolicy(sim, vi.valueIteration(MDP,mdp))
+    # vi = ValueIteration
+    # vi.maximizePolicy(sim, vi.valueIteration(MDP,mdp))
 
 if __name__ == '__main__':
     main()
