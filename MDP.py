@@ -7,7 +7,7 @@ class MDP:
         self.size = size.split(',')
         locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
         velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
-        self.states = list(itertools.product(velocities, locations))
+        self.states = list(itertools.product(locations, velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         self.prob = .2
         self.discount = 1  # TUNE <1
@@ -35,10 +35,10 @@ class MDP:
         Looks at the track and sets the rewards and the terminals or finish line for the MDP
         """
         for state in self.states:
-            if track[state[0][1]][state[0][0]] == 'F':
+            if track[state[0][0]][state[0][1]] == 'F':
                 self.terminals.append((state[0][0], state[0][1]))
                 self.reward[state] = 0
-            elif track[state[0][1]][state[0][0]] == '.' or track[state[0][1]][state[0][0]] == 'S':
+            elif track[state[0][0]][state[0][1]] == '.' or track[state[0][0]][state[0][1]] == 'S':
                 self.reward[state] = -1
             else:
                 self.reward[state] = -10
