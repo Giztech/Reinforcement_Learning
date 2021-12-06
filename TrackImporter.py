@@ -1,5 +1,3 @@
-import copy
-
 class TrackImporter:
     def __init__(self, file):
         self.file_name = file

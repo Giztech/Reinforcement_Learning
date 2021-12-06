@@ -1,5 +1,6 @@
 import itertools
-
+import random
+import Simulator
 
 class MDP:
     def __init__(self, size, track):
@@ -14,6 +15,8 @@ class MDP:
         self.setRewards(track)
         self.transitions = {}
         self.terminals = []
+        self.setTransitions()
+
 
     def Transitions(self, state, action):
         """
@@ -39,3 +42,6 @@ class MDP:
                 self.reward[state] = -1
             else:
                 self.reward[state] = -10
+
+    def setTransitions(self):
+     pass

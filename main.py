@@ -8,7 +8,7 @@ def main():
     track, start, size = ti.importTrack()
 
     mdp = MDP(size, track)
-    sim = Simulator(track, start, [0,0], mdp, size, False)
+    sim = Simulator(track, start, [0, 0], mdp, size, False)
 
     sim.goSARSA()
 

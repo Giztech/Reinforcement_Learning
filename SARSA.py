@@ -16,22 +16,21 @@ class SARSA:
         self.a = None
 
     def sarsa(self, currState, reward):
+        currAction = self.chooseAction(currState)
         if self.s != None:
-            currAction = self.chooseAction(currState)
             print(self.a)
             print(self.s)
             print(currState)
             print(currAction)
             self.Q[self.s][self.a] += self.learningRate * (reward + (self.discountFactor * self.Q[currState][currAction]) - self.Q[self.s][self.a])
-            self.s = currState
-            self.a = currAction
         self.s = currState
-        currAction = self.chooseAction(currState)
         self.a = currAction
         return self.a
 
     def chooseAction(self, state):
         if random.random() < self.epislon:
+            print(self.Q.keys())
+            print(tuple(state))
             print(self.Q[tuple(state)])
             action = max(self.Q[state], key=self.Q[state].get)
             print(action)

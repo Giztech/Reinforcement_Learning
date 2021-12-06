@@ -9,9 +9,9 @@ import random as rand
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, restartStart):
+    def __init__(self, track, start, velocity, MDP, size, crashnburn):
         self.size = size
-        self.restartStart = restartStart
+        self.crashnburn = crashnburn
         self.mdp = MDP
         self.track = track
         self.start = start
@@ -30,6 +30,7 @@ class Simulator:
         self.position = self.start
         self.velocity = [0, 0]
 
+    #  nondeterminism bby
     def makeAction(self):
         num = rand.randint(0, 4)
         if num == 0:
@@ -52,29 +53,36 @@ class Simulator:
     def movePos(self, acceleration):
         self.timestep += 1
         self.lastPos = self.position
+
+        #  if we can make the action, we increase our velocity
         if self.makeAction():
             self.velocity[0] += acceleration[0]
             self.velocity[1] += acceleration[1]
 
+        #  we update our position based on the velocity
         self.position[0] += self.velocity[0]
         self.position[1] += self.velocity[1]
-        #  if we land off track
-        if self.mdp.Rewards(self.position) == '#':
-            if self.restartStart is True:
+
+        # yum is the new reward
+        yum = self.mdp.Rewards(self.position)
+        self.reward += yum
+        #  if we land off track it's really bad
+        if yum == -10:
+            if self.crashnburn is True:
                 self.restartBeginning()
             else:
                 self.restartLastPos()
-            return None
+            return yum
 
-        #  TODO checking for clipping corners
+        #  TODO check for clipping corners
 
 
-        return self.mdp.R(self.position)
-
+        return yum
 
     def goSARSA(self):
         sarsa = SARSA(self.mdp)
         newReward = -1
+        # iterate over stuff until
         while True:
             state = (tuple(self.velocity), tuple(self.position))
             accelerate = sarsa.sarsa(state, newReward)
@@ -87,11 +95,15 @@ class Simulator:
 
     def print_track(self):
         rTrack = copy.deepcopy(self.track)
-        rTrack[self.position[0]][self.position[1]]= "C"
-        out = "Race Track:\n"
+        rTrack[self.position[0]][self.position[1]] = "C"
+        print("Race Track:")
         for x in rTrack:
-            out += str(x) + "\n"
-        print(out)
+            for p in x:
+                if p != -1:
+                    print('', p, end='')
+                else:
+                    print(p,end='')
+            print('\n')
 
 
 
