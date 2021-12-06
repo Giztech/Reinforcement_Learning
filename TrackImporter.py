@@ -25,7 +25,6 @@ class TrackImporter:
                 elif fileline[i][j] == 'F':
                     finishlist.append([i, j])
                     row.append(0)
-
             track.append(row)
 
         return track, startlist, size
