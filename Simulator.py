@@ -38,18 +38,6 @@ class Simulator:
         else:
             return True
 
-    #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
-    def checkAction(self, accel):
-        newpos = (self.velocity[0] + accel[0], self.velocity[1] + accel[1])
-        if (newpos[0]) > 5 or (newpos[1]) > 5 or (newpos[0]) < -5 or (newpos[1]) < -5:
-            # if the new acceleration is greater than 5 or less than 5, return false
-            return False
-        elif newpos[0] >= self.size[0] or newpos[1] >= self.size[1] or newpos[0] < 0 or newpos[1] < 0:
-            # if the new acceleration takes it off the board, return false
-            return False
-        else:
-            return True
-
     def movePos(self, acceleration):
         self.timestep += 1
         self.lastPos = self.position
