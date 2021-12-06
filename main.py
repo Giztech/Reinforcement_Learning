@@ -10,10 +10,10 @@ def main():
     mdp = MDP(size, track)
     sim = Simulator(track, start, [0, 0], mdp, size, False)
 
-    sim.goSARSA()
+    #sim.goSARSA()
 
     #sim.print_track()
-    #sim.callValueIteration()
+    sim.callValueIteration()
 
 if __name__ == '__main__':
     main()

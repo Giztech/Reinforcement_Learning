@@ -4,7 +4,7 @@ class ValueIteration:
 
     def valueIteration(self, MDP, epsilon=0.01):
 
-        # Copies all states into Utiliy Function
+        # Copies all states into Utility Function
         Util1 = {s: 0 for s in MDP.states}
         Rewards, Transitions, discount = MDP.Rewards, MDP.Transitions, MDP.discount
 
