@@ -40,9 +40,10 @@ class Simulator:
 
     def movePos(self, acceleration):
         self.timestep += 1
+        # print('before', self.position)
         self.lastPos = self.position
 
-        #  if we can make the action, we increase our velocity
+        #  if we can make the action (NONDETERMINISM), we increase our velocity
         if self.makeAction():
             self.velocity[0] += acceleration[0]
             self.velocity[1] += acceleration[1]
@@ -50,12 +51,17 @@ class Simulator:
         #  we update our position based on the velocity
         self.position[0] += self.velocity[0]
         self.position[1] += self.velocity[1]
-
+        # print('after', self.position)
         i = self.lastPos[0]
         inew = self.position[0]
         j = self.lastPos[1]
         jnew = self.position[1]
-        slope = (i - inew)/(j - jnew)
+        if i - inew == 0:
+            slope = i
+        elif j - jnew == 0:
+            slope = j
+        else:
+            slope = (i - inew)/(j - jnew)
         b = i - slope*j
         pairs = []
 
@@ -82,19 +88,26 @@ class Simulator:
             if x not in unique_pairs:
                 unique_pairs.append(x)
         unique_pairs.append([inew, jnew])
-
+        # print('lastpos', self.lastPos)
+        # print("position", self.position)
+        # print('velocity', self.velocity)
+        # print('action',acceleration)
         for p in unique_pairs:
+            # print('pair ', p)
+
             # look at new rewards function and see if this works because of things
             # also, rounding? round up always...(?)
             temp_reward = self.mdp.Rewards(p)
-            if temp_reward == '-10':
+            print(temp_reward)
+            if temp_reward == -10:
                 if self.crashnburn is True:
                     self.restartBeginning()
                 else:
                     self.restartLastPos()
                 self.reward += temp_reward
+                print('ya crashed')
                 return temp_reward
-            elif temp_reward == '0':
+            elif temp_reward == 0:
                 print('YA WON! How exciting. What a fantastic day! ')
                 print('REWARDS: ', self.reward, '\nTIMESTEPS: ', self.timestep)
                 quit()

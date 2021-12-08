@@ -5,9 +5,9 @@ import Simulator
 class MDP:
     def __init__(self, size, track):
         self.size = size.split(',')
-        locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
+        self.locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
         velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
-        self.states = list(itertools.product(locations, velocities))
+        self.states = list(itertools.product(self.locations, velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         self.prob = .2
         self.discount = 1  # TUNE <1
@@ -15,7 +15,7 @@ class MDP:
         self.setRewards(track)
         self.transitions = {}
         self.terminals = []
-        self.calculateTransitions()
+        # self.calculateTransitions()
 
 
     def Transitions(self, state, action):
@@ -34,14 +34,16 @@ class MDP:
         """
         Looks at the track and sets the rewards and the terminals or finish line for the MDP
         """
-        for state in self.states:
-            if track[state[0][0]][state[0][1]] == 'F':
-                self.terminals.append((state[0][0], state[0][1]))
-                self.reward[state] = 0
-            elif track[state[0][0]][state[0][1]] == '.' or track[state[0][0]][state[0][1]] == 'S':
-                self.reward[state] = -1
+        for loc in self.locations:
+            i = loc[0]
+            j = loc[1]
+            if track[i][j] == 'F':
+                self.terminals.append((i, j))
+                self.reward[loc] = 0
+            elif track[i][j] == '.' or track[i][j] == 'S':
+                self.reward[loc] = -1
             else:
-                self.reward[state] = -10
+                self.reward[loc] = -10
 
     def calculateTransitions(self):
 
