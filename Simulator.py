@@ -9,12 +9,13 @@ import random as rand
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, crashnburn):
+    def __init__(self, track, start, velocity, MDP, size, finish, crashnburn):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
         self.track = track
         self.start = start
+        self.finish = finish
         self.velocity = velocity
         self.timestep = 0
         self.position = rand.choice(start)
@@ -72,9 +73,12 @@ class Simulator:
         newReward = -1
         # iterate over stuff until
         while True:
-            state = (tuple(self.velocity), tuple(self.position))
+            state = (tuple(self.position), tuple(self.velocity))
             accelerate = sarsa.sarsa(state, newReward)
             newReward = self.movePos(accelerate)
+            if state[0] in self.finish:
+                print("WE DONE")
+                quit
 
 
     def callValueIteration(self):

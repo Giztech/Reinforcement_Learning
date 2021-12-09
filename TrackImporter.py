@@ -6,6 +6,7 @@ class TrackImporter:
         file = open(self.file_name, 'r')  # opens file
         fileline = file.read().split('\n') #split on line
         startlist = []
+        finishlist = []
         track = []
         size = fileline[0]
         fileline = fileline[1:]
@@ -22,10 +23,11 @@ class TrackImporter:
                 elif fileline[i][j] == '.':
                     row.append(-1)
                 elif fileline[i][j] == 'F':
+                    finishlist.append([i, j])
                     row.append(0)
             track.append(row)
 
-        return track, startlist, size
+        return track, startlist, size, finishlist
 
 
 
