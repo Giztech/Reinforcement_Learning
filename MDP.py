@@ -28,6 +28,7 @@ class MDP:
         """
         Return the reward of a state
         """
+        #print(self.reward)
         return self.reward[tuple(state)]
 
     def setRewards(self, track):
@@ -52,7 +53,7 @@ class MDP:
         if (newaccel[0]) > 5 or (newaccel[1]) > 5 or (newaccel[0]) < -5 or (newaccel[1]) < -5:
             # if the new acceleration is greater than 5 or less than 5, return false
             return False
-        elif newpos[0] >= self.size[0] or newpos[1] >= self.size[1] or newpos[0] < 0 or newpos[1] < 0:
+        elif newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
             # if the new acceleration takes it off the board, return false
             return False
         else:

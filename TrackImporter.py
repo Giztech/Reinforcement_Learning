@@ -27,7 +27,7 @@ class TrackImporter:
                     row.append(0)
             track.append(row)
 
-        return track, startlist, finishlist, size
+        return track, startlist, size, finishlist
 
 
 
