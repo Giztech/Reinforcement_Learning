@@ -52,7 +52,6 @@ class MDP:
             for actionY in self.actions:
                 for actionX in self.actions:
 
-
                     velocityX = state[1][0] + ([1][0])
                     if abs(velocityX) > 5:
                         velocityX = state[1][0]

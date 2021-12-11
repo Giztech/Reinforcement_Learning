@@ -1,6 +1,9 @@
+import copy
+
 class ValueIteration:
     def __init__(self):
         pass
+
 
     def valueIteration(self, MDP, epsilon=0.01):
 
@@ -25,3 +28,5 @@ class ValueIteration:
         for s in MDP.states:
             policy[s] = max(MDP.actions(s), key=lambda a: sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a)))
         return policy
+
+
