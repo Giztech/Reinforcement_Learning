@@ -18,6 +18,8 @@ class SARSA:
     def sarsa(self, currState, reward):
         while True:
             currAction = self.chooseAction(currState)
+            print(currState)
+            print(currAction)
             #if self.mdp.checkAction((-1,-1), (2,0), (9,6)):
             if self.mdp.checkAction(currAction, currState[1], currState[0]):
                 if self.s != None:

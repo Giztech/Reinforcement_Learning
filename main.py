@@ -4,7 +4,7 @@ from MDP import MDP
 from ValueIteration import ValueIteration
 
 def main():
-    ti = TrackImporter("data/test.txt")
+    ti = TrackImporter("data/O-track.txt")
     track, start, size, finish = ti.importTrack()
 
     mdp = MDP(size, track)
