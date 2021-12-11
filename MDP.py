@@ -132,6 +132,7 @@ class MDP:
                         # Car hits wall
                         if value == -1:
                             finalStates.append((self.mdpHigh, (state[0], (0, 0))))
+                        # Car hits finish
                         elif value == 0:
                             finalStates.append((self.mdpHigh, (position, (0, 0))))
                         # Car hits neither
@@ -142,6 +143,7 @@ class MDP:
                         # Car hits wall
                         if value == -1:
                             finalStates.append((self.mdpLow, (state[0], (0, 0))))
+                        # Car hits finish
                         elif value == 0:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         else:

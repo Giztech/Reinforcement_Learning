@@ -1,16 +1,14 @@
 import copy
 from SARSA import SARSA
 from ValueIteration import ValueIteration
-from TrackImporter import TrackImporter
 from SARSA import SARSA
-from MDP import MDP
 import random as rand
 import math
 
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, MDP, size, crashnburn):
+    def __init__(self, track, start, MDP, size,finish, crashnburn):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
@@ -22,6 +20,7 @@ class Simulator:
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
         self.reward = 0
+        self.finish = finish
 
 
     def restartLastPos(self):
@@ -145,7 +144,7 @@ class Simulator:
 
     def callValueIteration(self):
         vi = ValueIteration()
-        vi.maximizePolicy(self.mdp, vi.valueIteration(self.mdp))
+        vi.valueIteration(self.mdp)
 
     def print_track(self):
         rTrack = copy.deepcopy(self.track)
