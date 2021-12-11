@@ -1,24 +1,28 @@
 import copy
-from ValueIteration import ValueIteration
 from SARSA import SARSA
+from ValueIteration import ValueIteration
+from TrackImporter import TrackImporter
+from SARSA import SARSA
+from MDP import MDP
 import random as rand
 import math
 
+
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, finish, crashnburn):
+    def __init__(self, track, start, velocity, MDP, size, crashnburn, finish):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
         self.track = track
         self.start = start
-        self.finish = finish
         self.velocity = velocity
         self.timestep = 0
         self.position = rand.choice(start)
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
         self.reward = -1
+        self.finish = finish
 
     def restartLastPos(self):
         self.position = self.lastPos
@@ -96,15 +100,14 @@ class Simulator:
             # look at new rewards function and see if this works because of things
             # also, rounding? round up always...(?)
             temp_reward = self.mdp.Rewards(p)
-            #print(temp_reward)
+            print(temp_reward)
             if temp_reward == -10:
                 if self.crashnburn is True:
                     self.restartBeginning()
                 else:
                     self.restartLastPos()
                 self.reward += temp_reward
-                #print('ya crashed')
-                #quit()
+                print('ya crashed')
                 return temp_reward
             elif temp_reward == 0:
                 print('YA WON! How exciting. What a fantastic day! ')
@@ -113,6 +116,14 @@ class Simulator:
 
         return -1
 
+    def goSARSA(self):
+        sarsa = SARSA(self.mdp)
+        newReward = -1
+        # iterate over stuff until
+        while True:
+            state = (tuple(self.position), tuple(self.velocity))
+            accelerate = sarsa.sarsa(state, newReward)
+            newReward = self.movePos(accelerate)
 
     def callValueIteration(self):
         vi = ValueIteration()
