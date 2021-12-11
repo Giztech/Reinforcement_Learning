@@ -15,8 +15,7 @@ class ValueIteration:
             delta = 0
             # Maximizes the Utility while staying with the bounds of epsilon and gamma
             for s in MDP.states:
-                Util1[s] = Rewards(s) + discount * max(
-                    sum(p * Util[s1] for (p, s1) in Transitions(s, a)) for a in MDP.actions(s))
+                Util1[s] = Rewards(s) + discount * max([sum([p * Util[s1] for (p, s1) in Transitions(s, a)]) for a in MDP.Actions(s)])
                 delta = max(delta, abs(Util1[s] - Util[s]))
             if delta <= epsilon * (1 - discount) / discount:
                 return Util
