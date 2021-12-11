@@ -151,11 +151,10 @@ class Simulator:
         rTrack = copy.deepcopy(self.track)
         rTrack[self.position[0]][self.position[1]] = "C"
         print("Race Track:")
-        rTrack[4][8] = '3'
         for x in rTrack:
             for p in x:
                 if p != -1:
                     print('', p, end='')
                 else:
                     print(p, end='')
-            print('\n')
+            print('')

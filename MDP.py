@@ -1,23 +1,25 @@
 import itertools
-import random
+import math
 
 class MDP:
     def __init__(self, size, track,start):
         self.size = size.split(',')
         self.locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
-        velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
-        self.states = list(itertools.product(self.locations, velocities))
+        self.velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
+        self.states = list(itertools.product(self.locations, self.velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         self.prob = .2
         self.start = start
+        self.otherRewards = {}
+        self.setOtherRewards(track)
         self.discount = 1  # TUNE <1
         self.reward = {}
         self.terminals = []
         self.setRewards(track)
         self.transitions = {}
+        self.statesvi = {}
+        self.setStatesVi()
         self.setMDP()
-        self.otherRewards = {}
-        self.setOtherRewards(track)
 
     def Transitions(self, state, action):
         """
@@ -61,10 +63,19 @@ class MDP:
             else:
                 self.reward[state] = -10
 
+    # this creates the valid state, velocity pairs
+    def setStatesVi(self):
+        validlocations = []
+        for loc in self.locations:
+            rew = self.otherRewards[loc]
+            if rew == -1 or rew == 0:
+                validlocations.append(loc)
 
-    def setMDP(self,crash = False):
+        self.statesvi = list(itertools.product(validlocations, self.velocities))
+
+    def setMDP(self, crash = False):
         actions = [-1, 0, 1]
-        for state in self.states:
+        for state in self.statesvi:
             action = {}
             # Iterate though all possible combinations of actions
             for actionY in actions:
@@ -82,7 +93,69 @@ class MDP:
                     finalStates = []
 
                     #Bryn
-                    #postion, value = FUNCTION(state[0], (sToSPrimeX,sToSPrimeY))
+                    postion, value = self.checkPos(state[0], (sToSPrimeX, sToSPrimeY))
+
+    def makePairs(self, newPos, currPos):
+        pairs = []
+        first = max(newPos[0], currPos[0])
+        second = min(newPos[0], currPos[0])
+        for i in range(second, first):
+            pairs.append([i, newPos[1]])
+        return pairs
+
+    def checkPos(self, currPos, newPos):
+        i = currPos[0]
+        inew = newPos[0]
+        j = currPos[1]
+        jnew = newPos[1]
+        undef = False
+        pairs = []
+        if j - jnew == 0:
+            undef = True
+            pairs = self.makePairs(newPos, currPos)
+        elif i - inew == 0:
+            slope = 0
+        else:
+            slope = (i - inew) / (j - jnew)
+
+        if not undef:
+            b = i - slope * j
+
+            # print("b", b, 'slope', slope)
+            if abs(i - inew) > 2:
+                if i < inew:
+                    # so this is numbers between last i pos and next i pos
+                    for k in range(i + 1, inew):
+                        pairs.append([k, math.floor((k - b) / slope)])
+                else:
+                    for k in range(inew + 1, i):
+                        pairs.append([k, math.floor((k - b) / slope)])
+            if abs(j - jnew) > 2:
+                if j < jnew:
+                    # so this is numbers between last i pos and next i pos
+                    for k in range(j + 1, jnew):
+                        pairs.append([math.floor(slope * k + b), k])
+                else:
+                    for k in range(jnew + 1, j):
+                        pairs.append([math.floor(slope * k + b), k])
+
+        # to make sure we don't check some pairs more than necessary
+        unique_pairs = []
+        for x in pairs:
+            if x not in unique_pairs:
+                unique_pairs.append(x)
+        unique_pairs.append([inew, jnew])
+
+        for p in unique_pairs:
+            temp_reward = self.OtherRewards(p)
+            if temp_reward == -10:
+                # if it hits a wall
+                return newPos, -1
+            elif temp_reward == 0:
+                # if it passes the finish line!
+                return newPos, 0
+        # if it just continues along the path, like the good little car that it should be
+        return newPos, 1
 
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
