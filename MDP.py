@@ -1,8 +1,10 @@
 import itertools
 import math
+import random
+
 
 class MDP:
-    def __init__(self, size, track,start):
+    def __init__(self, size, track, start):
         self.size = size.split(',')
         self.locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
         self.velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
@@ -13,6 +15,8 @@ class MDP:
         self.otherRewards = {}
         self.setOtherRewards(track)
         self.discount = 1  # TUNE <1
+        self.mdpHigh = .7 # TUNE
+        self.mdpLow = .3 # TUNE
         self.reward = {}
         self.terminals = []
         self.setRewards(track)
@@ -38,6 +42,11 @@ class MDP:
         Return the reward of a state
         """
         return self.reward[state]
+
+    def Actions(self, state):
+        #print(state)
+        #print(self.transitions[tuple(0,0)])
+        return self.transitions[state]
 
     def setOtherRewards(self, track):
         for loc in self.locations:
@@ -73,7 +82,7 @@ class MDP:
 
         self.statesvi = list(itertools.product(validlocations, self.velocities))
 
-    def setMDP(self, crash = False):
+    def setMDP(self, crashnburn=False):
         actions = [-1, 0, 1]
         for state in self.statesvi:
             action = {}
@@ -92,8 +101,51 @@ class MDP:
                     sToSPrimeY = state[0][1] + velocityY
                     finalStates = []
 
-                    #Bryn
-                    postion, value = self.checkPos(state[0], (sToSPrimeX, sToSPrimeY))
+                    # Bryn
+                    position, value = self.checkPos(state[0], (sToSPrimeX, sToSPrimeY))
+
+                    # Go to Start Crash Type
+                    if crashnburn:
+                        # Car hits wall
+                        if value == -1:
+                            finalStates.append((self.mdpHigh, (random.choice(self.start), (0, 0))))
+                        # Car hits finish
+                        elif value == 0:
+                            finalStates.append((self.mdpHigh, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpHigh, ((sToSPrimeX, sToSPrimeY), (velocityX, velocityY))))
+                        # Check for failure
+                        position, value = self.checkPos(state[0], (state[0][0] + state[1][0], state[0][1] + state[1][1]))
+                        # Car hits wall
+                        if value == -1:
+                            finalStates.append((self.mdpLow, (random.choice(self.start), (0, 0))))
+                        # Car hits finish
+                        elif value == 0:
+                            finalStates.append((self.mdpLow, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpLow, (position, state[1])))
+                    # Stop when hitting Wall Crash Type
+                    else:
+                        # Car hits wall or finish
+                        if value == -1 or value == 0:
+                            finalStates.append((self.mdpHigh, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpHigh, ((sToSPrimeX, sToSPrimeY), (velocityX, velocityY))))
+                        # Check for failure
+                        position, value = self.checkPos(state[0], (state[0][0] + state[1][0], state[0][1] + state[1][1]))
+                        # Car hits wall or finish
+                        if value == -1 or value == 0:
+                            finalStates.append((self.mdpLow, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpLow, (position, state[1])))
+
+                    action[(actionX, actionY)] = finalStates
+                self.transitions[state] = action
+
 
     def makePairs(self, newPos, currPos):
         pairs = []
@@ -157,7 +209,6 @@ class MDP:
         # if it just continues along the path, like the good little car that it should be
         return newPos, 1
 
-
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
         newaccel = (velocity[0] + accel[0], velocity[1] + accel[1])
@@ -170,6 +221,3 @@ class MDP:
         #     return False
         else:
             return True
-
-
-
