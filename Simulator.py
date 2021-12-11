@@ -21,7 +21,7 @@ class Simulator:
         self.position = rand.choice(start)
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
-        self.reward = -1
+        self.reward = 0
         self.finish = finish
 
     def restartLastPos(self):
@@ -42,18 +42,21 @@ class Simulator:
 
     def movePos(self, acceleration):
         self.timestep += 1
-        # print('before', self.position)
-        self.lastPos = self.position
+        #print('before', self.position, self.velocity)
+        self.lastPos = self.position.copy()
+        #print('lastpos', self.lastPos)
 
         #  if we can make the action (NONDETERMINISM), we increase our velocity
         if self.makeAction():
+            #print(' update vel')
             self.velocity[0] += acceleration[0]
             self.velocity[1] += acceleration[1]
 
         #  we update our position based on the velocity
         self.position[0] += self.velocity[0]
         self.position[1] += self.velocity[1]
-        # print('after', self.position)
+        #print('lastposlaster', self.lastPos, self.position)
+        #print('after', self.position, self.velocity)
         i = self.lastPos[0]
         inew = self.position[0]
         j = self.lastPos[1]
@@ -100,7 +103,7 @@ class Simulator:
             # look at new rewards function and see if this works because of things
             # also, rounding? round up always...(?)
             temp_reward = self.mdp.OtherRewards(p)
-            # print(temp_reward)
+            print(temp_reward, p)
             if temp_reward == -10:
                 if self.crashnburn is True:
                     self.restartBeginning()
@@ -113,7 +116,7 @@ class Simulator:
                 print('YA WON! How exciting. What a fantastic day! ')
                 print('REWARDS: ', self.reward, '\nTIMESTEPS: ', self.timestep)
                 quit()
-
+        self.reward += -1
         return -1
 
     def goSARSA(self):
@@ -122,8 +125,10 @@ class Simulator:
         # iterate over stuff until
         while True:
             state = (tuple(self.position), tuple(self.velocity))
+            print(state)
             accelerate = sarsa.sarsa(state, newReward)
             newReward = self.movePos(accelerate)
+            print(newReward)
 
     def callValueIteration(self):
         vi = ValueIteration()

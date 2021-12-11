@@ -23,6 +23,7 @@ class SARSA:
                     self.Q[self.s][self.a] += self.learningRate * (reward + (self.discountFactor * self.Q[currState][currAction]) - self.Q[self.s][self.a])
                 self.s = currState
                 self.a = currAction
+                print(currState, currAction)
                 return self.a
 
 

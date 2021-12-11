@@ -11,9 +11,9 @@ class MDP:
         self.prob = .2
         self.discount = 1  # TUNE <1
         self.reward = {}
+        self.terminals = []
         self.setRewards(track)
         self.transitions = {}
-        self.terminals = []
         self.otherRewards = {}
         self.setOtherRewards(track)
 
@@ -38,10 +38,9 @@ class MDP:
         for loc in self.locations:
             i = loc[0]
             j = loc[1]
-            if track[i][j] == 'F':
-                self.terminals.append((i, j))
+            if track[i][j] == 0:
                 self.otherRewards[loc] = 0
-            elif track[i][j] == '.' or track[i][j] == 'S':
+            elif track[i][j] == -1:
                 self.otherRewards[loc] = -1
             else:
                 self.otherRewards[loc] = -10
@@ -51,10 +50,10 @@ class MDP:
         Looks at the track and sets the rewards and the terminals or finish line for the MDP
         """
         for state in self.states:
-            if track[state[0][0]][state[0][1]] == 'F':
+            if track[state[0][0]][state[0][1]] == 0:
                 self.terminals.append((state[0][0], state[0][1]))
                 self.reward[state] = 0
-            elif track[state[0][0]][state[0][1]] == '.' or track[state[0][0]][state[0][1]] == 'S':
+            elif track[state[0][0]][state[0][1]] == -1:
                 self.reward[state] = -1
             else:
                 self.reward[state] = -10
