@@ -99,15 +99,15 @@ class Simulator:
 
             # look at new rewards function and see if this works because of things
             # also, rounding? round up always...(?)
-            temp_reward = self.mdp.Rewards(p)
-            print(temp_reward)
+            temp_reward = self.mdp.OtherRewards(p)
+            # print(temp_reward)
             if temp_reward == -10:
                 if self.crashnburn is True:
                     self.restartBeginning()
                 else:
                     self.restartLastPos()
                 self.reward += temp_reward
-                print('ya crashed')
+                # print('ya crashed')
                 return temp_reward
             elif temp_reward == 0:
                 print('YA WON! How exciting. What a fantastic day! ')

@@ -1,6 +1,5 @@
 import itertools
 import random
-from Simulator import Simulator
 
 class MDP:
     def __init__(self, size, track):
@@ -15,6 +14,8 @@ class MDP:
         self.setRewards(track)
         self.transitions = {}
         self.terminals = []
+        self.otherRewards = {}
+        self.setOtherRewards(track)
 
 
     def Transitions(self, state, action):
@@ -23,6 +24,9 @@ class MDP:
         """
         return self.transitions[state][action]
 
+    def OtherRewards(self, state):
+        return self.otherRewards[tuple(state)]
+
     def Rewards(self, state):
         """
         Return the reward of a state
@@ -30,20 +34,30 @@ class MDP:
         #print(self.reward)
         return self.reward[tuple(state)]
 
-    def setRewards(self, track):
-        """
-        Looks at the track and sets the rewards and the terminals or finish line for the MDP
-        """
+    def setOtherRewards(self, track):
         for loc in self.locations:
             i = loc[0]
             j = loc[1]
             if track[i][j] == 'F':
                 self.terminals.append((i, j))
-                self.reward[loc] = 0
+                self.otherRewards[loc] = 0
             elif track[i][j] == '.' or track[i][j] == 'S':
-                self.reward[loc] = -1
+                self.otherRewards[loc] = -1
             else:
-                self.reward[loc] = -10
+                self.otherRewards[loc] = -10
+
+    def setRewards(self, track):
+        """
+        Looks at the track and sets the rewards and the terminals or finish line for the MDP
+        """
+        for state in self.states:
+            if track[state[0][0]][state[0][1]] == 'F':
+                self.terminals.append((state[0][0], state[0][1]))
+                self.reward[state] = 0
+            elif track[state[0][0]][state[0][1]] == '.' or track[state[0][0]][state[0][1]] == 'S':
+                self.reward[state] = -1
+            else:
+                self.reward[state] = -10
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
