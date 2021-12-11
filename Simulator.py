@@ -10,13 +10,13 @@ import math
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, crashnburn, finish):
+    def __init__(self, track, start, MDP, size, crashnburn, finish):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
         self.track = track
         self.start = start
-        self.velocity = velocity
+        self.velocity = [0, 0]
         self.timestep = 0
         self.position = rand.choice(start)
         self.lastPos = self.position
