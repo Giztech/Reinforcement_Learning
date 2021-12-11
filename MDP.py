@@ -1,21 +1,29 @@
 import itertools
+import math
 import random
 
+
 class MDP:
-    def __init__(self, size, track):
+    def __init__(self, size, track, start):
         self.size = size.split(',')
         self.locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
-        velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
-        self.states = list(itertools.product(self.locations, velocities))
+        self.velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
+        self.states = list(itertools.product(self.locations, self.velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         self.prob = .2
+        self.start = start
+        self.otherRewards = {}
+        self.setOtherRewards(track)
+        self.discount = 1  # TUNE <1
+        self.mdpHigh = .7 # TUNE
+        self.mdpLow = .3 # TUNE
         self.reward = {}
         self.terminals = []
         self.setRewards(track)
         self.transitions = {}
-        self.otherRewards = {}
-        self.setOtherRewards(track)
-
+        self.statesvi = {}
+        self.setStatesVi()
+        self.setMDP()
 
     def Transitions(self, state, action):
         """
@@ -33,8 +41,13 @@ class MDP:
         """
         Return the reward of a state
         """
-        #print(self.reward)
-        return self.reward[tuple(state)]
+        return self.reward[state]
+
+    def Actions(self, state):
+        """
+        Return all actions of a state
+        """
+        return self.transitions[state]
 
     def setOtherRewards(self, track):
         for loc in self.locations:
@@ -60,14 +73,164 @@ class MDP:
             else:
                 self.reward[state] = -10
 
+    # this creates the valid state, velocity pairs
+    def setStatesVi(self):
+        validlocations = []
+        for loc in self.locations:
+            rew = self.otherRewards[loc]
+            if rew == -1 or rew == 0:
+                validlocations.append(loc)
+
+        self.statesvi = list(itertools.product(validlocations, self.velocities))
+
+    def setMDP(self, crashnburn=False):
+        actions = [-1, 0, 1]
+        for state in self.statesvi:
+            action = {}
+            # Iterate though all possible combinations of actions
+            for actionY in actions:
+                for actionX in actions:
+                    # Change velocity based on action. Velocity must be between -5 and 5
+                    velocityX = state[1][0] + actionX
+                    if abs(velocityX) > 5:
+                        velocityX = state[1][0]
+                    velocityY = state[1][1] + actionY
+                    if abs(velocityY) > 5:
+                        velocityY = state[1][1]
+                    # The new position based on action and state
+                    sToSPrimeX = state[0][0] + velocityX
+                    sToSPrimeY = state[0][1] + velocityY
+                    finalStates = []
+
+                    # Bryn
+                    position, value = self.checkPos(state[0], (sToSPrimeX, sToSPrimeY))
+
+                    # Go to Start Crash Type
+                    if crashnburn:
+                        # Car hits wall
+                        if value == -1:
+                            finalStates.append((self.mdpHigh, (random.choice(self.start), (0, 0))))
+                        # Car hits finish
+                        elif value == 0:
+                            finalStates.append((self.mdpHigh, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpHigh, (position, (velocityX, velocityY))))
+                        # Check for failure
+
+                        # Car hits wall
+                        if value == -1:
+                            finalStates.append((self.mdpLow, (random.choice(self.start), (0, 0))))
+                        # Car hits finish
+                        elif value == 0:
+                            finalStates.append((self.mdpLow, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
+                    # Stop when hitting Wall Crash Type
+                    else:
+                        # Car hits wall
+                        if value == -1:
+                            finalStates.append((self.mdpHigh, (state[0], (0, 0))))
+                        elif value == 0:
+                            finalStates.append((self.mdpHigh, (position, (0, 0))))
+                        # Car hits neither
+                        else:
+                            finalStates.append((self.mdpHigh, (position, (velocityX, velocityY))))
+                        # Check for failure
+
+                        # Car hits wall
+                        if value == -1:
+                            finalStates.append((self.mdpLow, (state[0], (0, 0))))
+                        elif value == 0:
+                            finalStates.append((self.mdpLow, (position, (0, 0))))
+                        else:
+                            finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
+
+                    action[(actionX, actionY)] = finalStates
+                self.transitions[state] = action
+
+
+    def makePairs(self, newPos, currPos):
+        pairs = []
+        first = max(newPos[0], currPos[0])
+        second = min(newPos[0], currPos[0])
+        for i in range(second, first):
+            pairs.append([i, newPos[1]])
+        return pairs
+
+    def checkPos(self, currPos, newPos):
+        i = currPos[0]
+        inew = newPos[0]
+        j = currPos[1]
+        jnew = newPos[1]
+        undef = False
+        pairs = []
+        if j - jnew == 0:
+            undef = True
+            pairs = self.makePairs(newPos, currPos)
+        elif i - inew == 0:
+            slope = 0
+        else:
+            slope = (i - inew) / (j - jnew)
+
+        if not undef:
+            b = i - slope * j
+
+            # print("b", b, 'slope', slope)
+            if abs(i - inew) > 2:
+                if i < inew:
+                    # so this is numbers between last i pos and next i pos
+                    for k in range(i + 1, inew):
+                        pairs.append([k, math.floor((k - b) / slope)])
+                else:
+                    for k in range(inew + 1, i):
+                        pairs.append([k, math.floor((k - b) / slope)])
+            if abs(j - jnew) > 2:
+                if j < jnew:
+                    # so this is numbers between last i pos and next i pos
+                    for k in range(j + 1, jnew):
+                        pairs.append([math.floor(slope * k + b), k])
+                else:
+                    for k in range(jnew + 1, j):
+                        pairs.append([math.floor(slope * k + b), k])
+
+        # to make sure we don't check some pairs more than necessary
+        unique_pairs = []
+        for x in pairs:
+            if x not in unique_pairs:
+                unique_pairs.append(x)
+        unique_pairs.append([inew, jnew])
+
+        for p in unique_pairs:
+            temp_reward = self.OtherRewards(p)
+            if temp_reward == -10:
+                # if it hits a wall
+                return newPos, -1
+            elif temp_reward == 0:
+                # if it passes the finish line!
+                return newPos, 0
+        # if it just continues along the path, like the good little car that it should be
+        return newPos, 1
+
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
         newaccel = (velocity[0] + accel[0], velocity[1] + accel[1])
+        newpos = (currpos[0] + newaccel[0], currpos[1] + newaccel[1])
         if (newaccel[0]) > 5 or (newaccel[1]) > 5 or (newaccel[0]) < -5 or (newaccel[1]) < -5:
             # if the new acceleration is greater than 5 or less than 5, return false
             return False
+        # elif newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
+        #     # if the new acceleration takes it off the board, return false
+        #     return False
         else:
             return True
 
-
-
+    def checkOffBoard(self, accel, velocity, currpos):
+        newaccel = (velocity[0] + accel[0], velocity[1] + accel[1])
+        newpos = (currpos[0] + newaccel[0], currpos[1] + newaccel[1])
+        if newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
+            # if the new acceleration takes it off the board, return false
+            return False
+        else:
+            return True

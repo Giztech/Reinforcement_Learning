@@ -7,7 +7,7 @@ def main():
     ti = TrackImporter("data/R-track.txt")
     track, start, size, finish = ti.importTrack()
 
-    mdp = MDP(size, track)
+    mdp = MDP(size, track, start)
     sim = Simulator(track, start, [0, 0], mdp, size, True) #False - restart last location, True - restart beginning
 
     sim.print_track()
