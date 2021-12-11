@@ -5,10 +5,10 @@ from ValueIteration import ValueIteration
 
 def main():
     ti = TrackImporter("data/L-track.txt")
-    track, start, size = ti.importTrack()
+    track, start, finish ,size = ti.importTrack()
 
     mdp = MDP(size, track)
-    sim = Simulator(track, start, [0, 0], mdp, size, False)
+    sim = Simulator(track, start, finish, [0, 0], mdp, size, False)
 
     #sim.goSARSA()
 

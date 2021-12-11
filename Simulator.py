@@ -9,7 +9,7 @@ import math
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, crashnburn):
+    def __init__(self, track, start, velocity, MDP, size, crashnburn, finish):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
@@ -21,6 +21,7 @@ class Simulator:
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
         self.reward = -1
+        self.finish = finish
 
     def restartLastPos(self):
         self.position = self.lastPos
@@ -114,6 +115,21 @@ class Simulator:
 
         return -1
 
+    def checkTraversed(self, PointA: tuple, PointB: tuple):
+        last = PointA
+        for t in self._path(PointA, PointB) + [PointB]:
+            if self.isFinish(t):
+                return 1, t
+            elif self.isWall(t):
+                if self.debug:
+                    print("Crash at " + str(t))
+                return -1, last
+            last = t
+        return 0, PointB
+
+    def getCrash(self):
+        return self.crashnburn
+
     def goSARSA(self):
         sarsa = SARSA(self.mdp)
         newReward = -1
@@ -140,3 +156,7 @@ class Simulator:
                 else:
                     print(p,end='')
             print('\n')
+
+
+
+
