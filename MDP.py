@@ -15,7 +15,7 @@ class MDP:
         self.setRewards(track)
         self.transitions = {}
         self.terminals = []
-        self.setTransitions()
+        # self.calculateTransitions()
 
 
     def Transitions(self, state, action):
@@ -24,27 +24,44 @@ class MDP:
         """
         return self.transitions[state][action]
 
-    def Rewards(self, loc):
+    def Rewards(self, state):
         """
         Return the reward of a state
         """
-        return self.reward[tuple(loc)]
+        #print(self.reward)
+        return self.reward[tuple(state)]
 
     def setRewards(self, track):
         """
         Looks at the track and sets the rewards and the terminals or finish line for the MDP
         """
         for loc in self.locations:
-            if track[loc[0]][loc[1]] == 'F':
-                self.terminals.append((loc[0], loc[1]))
+            i = loc[0]
+            j = loc[1]
+            if track[i][j] == 'F':
+                self.terminals.append((i, j))
                 self.reward[loc] = 0
-            elif track[loc[0]][loc[1]] == '.' or track[loc[0]][loc[1]] == 'S':
+            elif track[i][j] == '.' or track[i][j] == 'S':
                 self.reward[loc] = -1
             else:
                 self.reward[loc] = -10
 
-    def setTransitions(self):
-     pass
+    def calculateTransitions(self):
+
+        for state in self.states:
+            action = {}
+            for actionY in self.actions:
+                for actionX in self.actions:
+
+
+                    velocityX = state[1][0] + ([1][0])
+                    if abs(velocityX) > 5:
+                        velocityX = state[1][0]
+                    velocityY = state[1][1] + actionY
+                    if abs(velocityY) > 5:
+                        velocityY = state[1][1]
+
+            self.transitions[state] = action
 
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
