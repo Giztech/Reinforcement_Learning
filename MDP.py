@@ -146,7 +146,7 @@ class MDP:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         else:
                             finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
-
+                    # print(position, value, finalStates)
                     action[(actionX, actionY)] = finalStates
                 self.transitions[state] = action
 
@@ -205,12 +205,15 @@ class MDP:
         for p in unique_pairs:
             temp_reward = self.OtherRewards(p)
             if temp_reward == -10:
+                # print(p, temp_reward)
                 # if it hits a wall
                 return newPos, -1
             elif temp_reward == 0:
+                # print(p, temp_reward)
                 # if it passes the finish line!
-                return newPos, 0
+                return p, 0
         # if it just continues along the path, like the good little car that it should be
+        # print(newPos, 1)
         return newPos, 1
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
