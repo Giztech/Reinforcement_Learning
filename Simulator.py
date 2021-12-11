@@ -1,16 +1,13 @@
 import copy
-from SARSA import SARSA
 from ValueIteration import ValueIteration
-from TrackImporter import TrackImporter
 from SARSA import SARSA
-from MDP import MDP
 import random as rand
 import math
 
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, crashnburn, finish):
+    def __init__(self, track, start, velocity, MDP, size, crashnburn):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
@@ -22,7 +19,6 @@ class Simulator:
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
         self.reward = 0
-        self.finish = finish
 
     def restartLastPos(self):
         self.position = self.lastPos
@@ -137,11 +133,11 @@ class Simulator:
         # iterate over stuff until
         while True:
             state = (tuple(self.position), tuple(self.velocity))
-            print(state)
             if self.makeAction():
                 accelerate = sarsa.sarsa(state, newReward)
                 newReward = self.movePos(accelerate)
-                print(newReward)
+            # else:
+            #     newReward = self.movePos((0, 0))
 
     def callValueIteration(self):
         vi = ValueIteration()
@@ -151,7 +147,6 @@ class Simulator:
         rTrack = copy.deepcopy(self.track)
         rTrack[self.position[0]][self.position[1]] = "C"
         print("Race Track:")
-        rTrack[4][8] = '3'
         for x in rTrack:
             for p in x:
                 if p != -1:

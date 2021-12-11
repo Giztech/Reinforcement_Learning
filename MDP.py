@@ -9,7 +9,6 @@ class MDP:
         self.states = list(itertools.product(self.locations, velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         self.prob = .2
-        self.discount = 1  # TUNE <1
         self.reward = {}
         self.terminals = []
         self.setRewards(track)
@@ -64,13 +63,9 @@ class MDP:
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
         newaccel = (velocity[0] + accel[0], velocity[1] + accel[1])
-        newpos = (currpos[0] + newaccel[0], currpos[1] + newaccel[1])
         if (newaccel[0]) > 5 or (newaccel[1]) > 5 or (newaccel[0]) < -5 or (newaccel[1]) < -5:
             # if the new acceleration is greater than 5 or less than 5, return false
             return False
-        # elif newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
-        #     # if the new acceleration takes it off the board, return false
-        #     return False
         else:
             return True
 
