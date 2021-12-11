@@ -24,8 +24,13 @@ class ValueIteration:
 
     def maximizePolicy(self, MDP, U):
         policy = {}
+        print(U)
         for s in MDP.statesvi:
-            policy[s] = max(MDP.Actions(s), key=lambda a: sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a)))
+
+            print(s)
+
+            y = lambda a: sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a))
+            policy[s] = max(MDP.Actions(s), key=y)
         return policy
 
-
+# ((1, 32), (-1, 3))
