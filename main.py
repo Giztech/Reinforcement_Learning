@@ -7,13 +7,13 @@ def main():
     ti = TrackImporter("data/L-track.txt")
     track, start, size, finish = ti.importTrack()
 
-    mdp = MDP(size, track)
-    sim = Simulator(track, start, [0, 0], mdp, size, finish, False)
+    mdp = MDP(size, track,start, finish)
+    sim = Simulator(track, start, [0, 0], mdp, size, False)
 
-    sim.goSARSA()
+    #sim.goSARSA()
 
     #sim.print_track()
-    #sim.callValueIteration()
+    sim.callValueIteration()
 
 if __name__ == '__main__':
     main()
