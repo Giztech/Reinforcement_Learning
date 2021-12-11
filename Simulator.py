@@ -10,7 +10,7 @@ import math
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, MDP, size, crashnburn, finish):
+    def __init__(self, track, start, MDP, size, crashnburn):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
@@ -22,7 +22,7 @@ class Simulator:
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
         self.reward = 0
-        self.finish = finish
+
 
     def restartLastPos(self):
         self.position = self.lastPos

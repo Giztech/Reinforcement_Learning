@@ -83,7 +83,6 @@ class MDP:
 
         self.statesvi = list(itertools.product(validlocations, self.velocities))
 
-
     def setMDP(self, crashnburn=False):
         actions = [-1, 0, 1]
         for state in self.statesvi:
@@ -118,7 +117,7 @@ class MDP:
                         else:
                             finalStates.append((self.mdpHigh, ((sToSPrimeX, sToSPrimeY), (velocityX, velocityY))))
                         # Check for failure
-                        position, value = self.checkPos(state[0], (state[0][0] + state[1][0], state[0][1] + state[1][1]))
+
                         # Car hits wall
                         if value == -1:
                             finalStates.append((self.mdpLow, (random.choice(self.start), (0, 0))))
@@ -131,17 +130,20 @@ class MDP:
                     # Stop when hitting Wall Crash Type
                     else:
                         # Car hits wall or finish
-                        if value == -1 or value == 0:
+                        if value == -1:
+                            finalStates.append((self.mdpHigh, (state[0], (0, 0))))
+                        if value == 0:
                             finalStates.append((self.mdpHigh, (position, (0, 0))))
                         # Car hits neither
                         else:
                             finalStates.append((self.mdpHigh, ((sToSPrimeX, sToSPrimeY), (velocityX, velocityY))))
                         # Check for failure
-                        position, value = self.checkPos(state[0], (state[0][0] + state[1][0], state[0][1] + state[1][1]))
+
                         # Car hits wall or finish
-                        if value == -1 or value == 0:
+                        if value == -1:
+                            finalStates.append((self.mdpLow, (state[0], (0, 0))))
+                        if value == 0:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
-                        # Car hits neither
                         else:
                             finalStates.append((self.mdpLow, (position, state[1])))
 
