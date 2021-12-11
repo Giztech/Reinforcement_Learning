@@ -113,6 +113,21 @@ class Simulator:
 
         return -1
 
+    def checkTraversed(self, PointA: tuple, PointB: tuple):
+        last = PointA
+        for t in self._path(PointA, PointB) + [PointB]:
+            if self.isFinish(t):
+                return 1, t
+            elif self.isWall(t):
+                if self.debug:
+                    print("Crash at " + str(t))
+                return -1, last
+            last = t
+        return 0, PointB
+
+    def getCrash(self):
+        return self.crashnburn
+
     def goSARSA(self):
         sarsa = SARSA(self.mdp)
         newReward = -1
@@ -121,9 +136,6 @@ class Simulator:
             state = (tuple(self.position), tuple(self.velocity))
             accelerate = sarsa.sarsa(state, newReward)
             newReward = self.movePos(accelerate)
-            if state[0] in self.finish:
-                print("WE DONE")
-                quit
 
 
     def callValueIteration(self):

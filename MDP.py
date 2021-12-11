@@ -16,6 +16,8 @@ class MDP:
         self.transitions = {}
         self.terminals = []
         # self.calculateTransitions()
+        self.crashnburn = Simulator.getCrash()
+
 
 
     def Transitions(self, state, action):
@@ -46,20 +48,25 @@ class MDP:
             else:
                 self.reward[loc] = -10
 
-    def calculateTransitions(self):
+    def calculateTransitions(self,crasnnburn):
 
         for state in self.states:
             action = {}
             for actionY in self.actions:
                 for actionX in self.actions:
 
-
-                    velocityX = state[1][0] + ([1][0])
+                    velocityX = state[1][0] + actionX
                     if abs(velocityX) > 5:
                         velocityX = state[1][0]
                     velocityY = state[1][1] + actionY
                     if abs(velocityY) > 5:
                         velocityY = state[1][1]
+
+                    sToSPrimeX = state[0][0] + velocityX
+                    sToSPrimeY = state[0][1] + velocityY
+                    endStates = []
+
+                    status, cell = Simulator.checkTraversed(state[0], (sToSPrimeX, sToSPrimeY))
 
             self.transitions[state] = action
 
