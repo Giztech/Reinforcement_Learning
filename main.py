@@ -4,16 +4,17 @@ from MDP import MDP
 from ValueIteration import ValueIteration
 
 def main():
-    ti = TrackImporter("data/L-track.txt")
+    ti = TrackImporter("data/O-track.txt")
     track, start, size, finish = ti.importTrack()
 
-    mdp = MDP(size, track,start, finish)
-    sim = Simulator(track, start, [0, 0], mdp, size, False)
+    mdp = MDP(size, track)
+    sim = Simulator(track, start, [0, 0], mdp, size, finish, False)
 
-    #sim.goSARSA()
+    sim.print_track()
+    sim.goSARSA()
 
-    #sim.print_track()
-    sim.callValueIteration()
+
+    #sim.callValueIteration()
 
 if __name__ == '__main__':
     main()

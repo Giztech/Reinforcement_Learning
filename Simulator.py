@@ -10,7 +10,7 @@ import math
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, velocity, MDP, size, crashnburn):
+    def __init__(self, track, start, velocity, MDP, size, crashnburn, finish):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
@@ -21,7 +21,8 @@ class Simulator:
         self.position = rand.choice(start)
         self.lastPos = self.position
         # reward is initially -1 because starting is -1
-        self.reward = -1
+        self.reward = 0
+        self.finish = finish
 
     def restartLastPos(self):
         self.position = self.lastPos
@@ -39,49 +40,64 @@ class Simulator:
         else:
             return True
 
+    def makePairs(self):
+        pairs = []
+        first = max(self.position[0], self.lastPos[0])
+        second = min(self.position[0], self.lastPos[0])
+        for i in range(second, first):
+            pairs.append([i, self.position[1]])
+        return pairs
+
     def movePos(self, acceleration):
         self.timestep += 1
-        # print('before', self.position)
-        self.lastPos = self.position
+        print('before', self.position, self.velocity)
+        self.lastPos = self.position.copy()
+        #print('lastpos', self.lastPos)
 
         #  if we can make the action (NONDETERMINISM), we increase our velocity
-        if self.makeAction():
-            self.velocity[0] += acceleration[0]
-            self.velocity[1] += acceleration[1]
+
+        self.velocity[0] += acceleration[0]
+        self.velocity[1] += acceleration[1]
 
         #  we update our position based on the velocity
         self.position[0] += self.velocity[0]
         self.position[1] += self.velocity[1]
-        # print('after', self.position)
+        #print('lastposlaster', self.lastPos, self.position)
+        print('after', self.position, self.velocity)
         i = self.lastPos[0]
         inew = self.position[0]
         j = self.lastPos[1]
         jnew = self.position[1]
-        if i - inew == 0:
-            slope = i
-        elif j - jnew == 0:
-            slope = j
+        undef = False
+        pairs = []
+        if j-jnew == 0:
+            undef = True
+            pairs = self.makePairs()
+        elif i - inew == 0:
+            slope = 0
         else:
             slope = (i - inew) / (j - jnew)
-        b = i - slope * j
-        pairs = []
 
-        if abs(i - inew) > 2:
-            if i < inew:
-                # so this is numbers between last i pos and next i pos
-                for k in range(i + 1, inew):
-                    pairs.append([k, math.floor((k - b) / slope)])
-            else:
-                for k in range(inew + 1, i):
-                    pairs.append([k, math.floor((k - b) / slope)])
-        if abs(j - jnew) > 2:
-            if j < jnew:
-                # so this is numbers between last i pos and next i pos
-                for k in range(j + 1, jnew):
-                    pairs.append([math.floor(slope * i + b), k])
-            else:
-                for k in range(jnew + 1, j):
-                    pairs.append([math.floor(slope * i + b), k])
+        if not undef:
+            b = i - slope * j
+
+            print("b", b, 'slope', slope)
+            if abs(i - inew) > 2:
+                if i < inew:
+                    # so this is numbers between last i pos and next i pos
+                    for k in range(i + 1, inew):
+                        pairs.append([k, math.floor((k - b) / slope)])
+                else:
+                    for k in range(inew + 1, i):
+                        pairs.append([k, math.floor((k - b) / slope)])
+            if abs(j - jnew) > 2:
+                if j < jnew:
+                    # so this is numbers between last i pos and next i pos
+                    for k in range(j + 1, jnew):
+                        pairs.append([math.floor(slope * k + b), k])
+                else:
+                    for k in range(jnew + 1, j):
+                        pairs.append([math.floor(slope * k + b), k])
 
         # to make sure we don't check some pairs more than necessary
         unique_pairs = []
@@ -94,12 +110,12 @@ class Simulator:
         # print('velocity', self.velocity)
         # print('action',acceleration)
         for p in unique_pairs:
-            # print('pair ', p)
+            print('pair ', p)
 
             # look at new rewards function and see if this works because of things
             # also, rounding? round up always...(?)
             temp_reward = self.mdp.OtherRewards(p)
-            # print(temp_reward)
+            print(temp_reward, p)
             if temp_reward == -10:
                 if self.crashnburn is True:
                     self.restartBeginning()
@@ -112,7 +128,7 @@ class Simulator:
                 print('YA WON! How exciting. What a fantastic day! ')
                 print('REWARDS: ', self.reward, '\nTIMESTEPS: ', self.timestep)
                 quit()
-
+        self.reward += -1
         return -1
 
     def goSARSA(self):
@@ -121,8 +137,11 @@ class Simulator:
         # iterate over stuff until
         while True:
             state = (tuple(self.position), tuple(self.velocity))
-            accelerate = sarsa.sarsa(state, newReward)
-            newReward = self.movePos(accelerate)
+            print(state)
+            if self.makeAction():
+                accelerate = sarsa.sarsa(state, newReward)
+                newReward = self.movePos(accelerate)
+                print(newReward)
 
     def callValueIteration(self):
         vi = ValueIteration()

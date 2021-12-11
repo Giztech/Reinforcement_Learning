@@ -1,26 +1,22 @@
 import itertools
-import math
 import random
 
-
 class MDP:
-    def __init__(self, size, track, start, finish):
+    def __init__(self, size, track):
         self.size = size.split(',')
         self.locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
         velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
         self.states = list(itertools.product(self.locations, velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
-        self.start = start
-        self.finish = finish
         self.prob = .2
         self.discount = 1  # TUNE <1
         self.reward = {}
+        self.terminals = []
         self.setRewards(track)
         self.transitions = {}
-        self.calculateMDP()
-        self.terminals = []
         self.otherRewards = {}
         self.setOtherRewards(track)
+
 
     def Transitions(self, state, action):
         """
@@ -29,23 +25,25 @@ class MDP:
         return self.transitions[state][action]
 
     def OtherRewards(self, state):
-        return self.otherRewards[tuple(state)]
+        if tuple(state) not in self.otherRewards.keys():
+            return -10
+        else:
+            return self.otherRewards[tuple(state)]
 
     def Rewards(self, state):
         """
         Return the reward of a state
         """
-
-        return self.reward[state]
+        #print(self.reward)
+        return self.reward[tuple(state)]
 
     def setOtherRewards(self, track):
         for loc in self.locations:
             i = loc[0]
             j = loc[1]
-            if track[i][j] == 'F':
-                self.terminals.append((i, j))
+            if track[i][j] == 0:
                 self.otherRewards[loc] = 0
-            elif track[i][j] == '.' or track[i][j] == 'S':
+            elif track[i][j] == -1:
                 self.otherRewards[loc] = -1
             else:
                 self.otherRewards[loc] = -10
@@ -55,20 +53,13 @@ class MDP:
         Looks at the track and sets the rewards and the terminals or finish line for the MDP
         """
         for state in self.states:
-            if track[state[0][0]][state[0][1]] == 'F':
+            if track[state[0][0]][state[0][1]] == 0:
                 self.terminals.append((state[0][0], state[0][1]))
                 self.reward[state] = 0
-            elif track[state[0][0]][state[0][1]] == '.' or track[state[0][0]][state[0][1]] == 'S':
+            elif track[state[0][0]][state[0][1]] == -1:
                 self.reward[state] = -1
             else:
                 self.reward[state] = -10
-
-    def calculateMDP(self, crashnburn=False):
-        pass
-
-
-
-
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
@@ -77,8 +68,11 @@ class MDP:
         if (newaccel[0]) > 5 or (newaccel[1]) > 5 or (newaccel[0]) < -5 or (newaccel[1]) < -5:
             # if the new acceleration is greater than 5 or less than 5, return false
             return False
-        elif newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
-            # if the new acceleration takes it off the board, return false
-            return False
+        # elif newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
+        #     # if the new acceleration takes it off the board, return false
+        #     return False
         else:
             return True
+
+
+

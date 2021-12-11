@@ -18,12 +18,18 @@ class SARSA:
     def sarsa(self, currState, reward):
         while True:
             currAction = self.chooseAction(currState)
+            print(currState)
+            print(currAction)
+            #if self.mdp.checkAction((-1,-1), (2,0), (9,6)):
             if self.mdp.checkAction(currAction, currState[1], currState[0]):
                 if self.s != None:
                     self.Q[self.s][self.a] += self.learningRate * (reward + (self.discountFactor * self.Q[currState][currAction]) - self.Q[self.s][self.a])
                 self.s = currState
                 self.a = currAction
+                print(currState, currAction)
                 return self.a
+            else:
+                print('stuck')
 
 
     def chooseAction(self, state):
