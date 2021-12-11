@@ -83,6 +83,7 @@ class MDP:
 
         self.statesvi = list(itertools.product(validlocations, self.velocities))
 
+
     def setMDP(self, crashnburn=False):
         actions = [-1, 0, 1]
         for state in self.statesvi:
