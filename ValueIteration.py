@@ -3,7 +3,6 @@ class ValueIteration:
     def __init__(self):
         pass
 
-
     def valueIteration(self, MDP, epsilon=0.01):
 
         # Copies all states into Utility Function

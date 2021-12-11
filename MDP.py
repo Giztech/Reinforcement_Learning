@@ -17,7 +17,6 @@ class MDP:
         self.terminals = []
 
 
-
     def Transitions(self, state, action):
         """
         Return the possible states of the given state action pair
