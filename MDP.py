@@ -2,21 +2,22 @@ import itertools
 import random
 
 class MDP:
-    def __init__(self, size, track):
+    def __init__(self, size, track,start):
         self.size = size.split(',')
         self.locations = list(itertools.product(range(int(self.size[0])), range(int(self.size[1]))))
         velocities = list(itertools.product(range(-5, 6), range(-5, 6)))
         self.states = list(itertools.product(self.locations, velocities))
         self.actions = [[-1, -1], [0, -1], [1, -1], [-1, 0], [0, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
         self.prob = .2
+        self.start = start
         self.discount = 1  # TUNE <1
         self.reward = {}
         self.terminals = []
         self.setRewards(track)
         self.transitions = {}
+        self.setMDP()
         self.otherRewards = {}
         self.setOtherRewards(track)
-
 
     def Transitions(self, state, action):
         """
@@ -34,8 +35,7 @@ class MDP:
         """
         Return the reward of a state
         """
-        #print(self.reward)
-        return self.reward[tuple(state)]
+        return self.reward[state]
 
     def setOtherRewards(self, track):
         for loc in self.locations:
@@ -60,6 +60,30 @@ class MDP:
                 self.reward[state] = -1
             else:
                 self.reward[state] = -10
+
+
+    def setMDP(self,crash = False):
+        actions = [-1, 0, 1]
+        for state in self.states:
+            action = {}
+            # Iterate though all possible combinations of actions
+            for actionY in actions:
+                for actionX in actions:
+                    # Change velocity based on action. Velocity must be between -5 and 5
+                    velocityX = state[1][0] + actionX
+                    if abs(velocityX) > 5:
+                        velocityX = state[1][0]
+                    velocityY = state[1][1] + actionY
+                    if abs(velocityY) > 5:
+                        velocityY = state[1][1]
+                    # The new position based on action and state
+                    sToSPrimeX = state[0][0] + velocityX
+                    sToSPrimeY = state[0][1] + velocityY
+                    finalStates = []
+
+                    #Bryn
+                    #postion, value = FUNCTION(state[0], (sToSPrimeX,sToSPrimeY))
+
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
