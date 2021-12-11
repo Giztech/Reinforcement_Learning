@@ -7,6 +7,7 @@ from MDP import MDP
 import random as rand
 import math
 
+
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
     def __init__(self, track, start, velocity, MDP, size, crashnburn, finish):
@@ -62,25 +63,25 @@ class Simulator:
         elif j - jnew == 0:
             slope = j
         else:
-            slope = (i - inew)/(j - jnew)
-        b = i - slope*j
+            slope = (i - inew) / (j - jnew)
+        b = i - slope * j
         pairs = []
 
-        if abs(i-inew) > 2:
+        if abs(i - inew) > 2:
             if i < inew:
                 # so this is numbers between last i pos and next i pos
-                for k in range(i+1, inew):
-                    pairs.append([k, math.floor((k-b)/slope)])
+                for k in range(i + 1, inew):
+                    pairs.append([k, math.floor((k - b) / slope)])
             else:
-                for k in range(inew+1, i):
-                    pairs.append([k, math.floor((k-b)/slope)])
-        if abs(j-jnew) > 2:
+                for k in range(inew + 1, i):
+                    pairs.append([k, math.floor((k - b) / slope)])
+        if abs(j - jnew) > 2:
             if j < jnew:
                 # so this is numbers between last i pos and next i pos
-                for k in range(j+1, jnew):
-                    pairs.append([math.floor(slope*i+b), k])
+                for k in range(j + 1, jnew):
+                    pairs.append([math.floor(slope * i + b), k])
             else:
-                for k in range(jnew+1, j):
+                for k in range(jnew + 1, j):
                     pairs.append([math.floor(slope * i + b), k])
 
         # to make sure we don't check some pairs more than necessary
@@ -115,30 +116,6 @@ class Simulator:
 
         return -1
 
-    def checkTraversed(self, PointA: tuple, PointB: tuple):
-        last = PointA
-        for t in self._path(PointA, PointB) + [PointB]:
-            if self.isFinish(t):
-                return 1, t
-            elif self.isWall(t):
-                if self.debug:
-                    print("Crash at " + str(t))
-                return -1, last
-            last = t
-        return 0, PointB
-
-    def getCrash(self):
-        return self.crashnburn
-
-    def goSARSA(self):
-        sarsa = SARSA(self.mdp)
-        newReward = -1
-        # iterate over stuff until
-        while True:
-            state = (tuple(self.position), tuple(self.velocity))
-            accelerate = sarsa.sarsa(state, newReward)
-            newReward = self.movePos(accelerate)
-
 
     def callValueIteration(self):
         vi = ValueIteration()
@@ -154,9 +131,5 @@ class Simulator:
                 if p != -1:
                     print('', p, end='')
                 else:
-                    print(p,end='')
+                    print(p, end='')
             print('\n')
-
-
-
-

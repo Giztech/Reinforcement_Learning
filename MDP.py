@@ -1,6 +1,6 @@
 import itertools
 import random
-import Simulator
+from Simulator import Simulator
 
 class MDP:
     def __init__(self, size, track):
@@ -15,8 +15,6 @@ class MDP:
         self.setRewards(track)
         self.transitions = {}
         self.terminals = []
-        # self.calculateTransitions()
-        self.crashnburn = Simulator.getCrash()
 
 
 
@@ -46,29 +44,6 @@ class MDP:
                 self.reward[loc] = -1
             else:
                 self.reward[loc] = -10
-
-    def calculateTransitions(self,crasnnburn):
-
-        for state in self.states:
-            action = {}
-            for actionY in self.actions:
-                for actionX in self.actions:
-
-                    velocityX = state[1][0] + actionX
-                    if abs(velocityX) > 5:
-                        velocityX = state[1][0]
-                    velocityY = state[1][1] + actionY
-                    if abs(velocityY) > 5:
-                        velocityY = state[1][1]
-
-                    sToSPrimeX = state[0][0] + velocityX
-                    sToSPrimeY = state[0][1] + velocityY
-                    endStates = []
-
-                    status, cell = Simulator.checkTraversed(state[0], (sToSPrimeX, sToSPrimeY))
-
-            self.transitions[state] = action
-
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
     def checkAction(self, accel, velocity, currpos):
