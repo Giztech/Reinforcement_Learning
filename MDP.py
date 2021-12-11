@@ -115,7 +115,7 @@ class MDP:
                             finalStates.append((self.mdpHigh, (position, (0, 0))))
                         # Car hits neither
                         else:
-                            finalStates.append((self.mdpHigh, ((sToSPrimeX, sToSPrimeY), (velocityX, velocityY))))
+                            finalStates.append((self.mdpHigh, (position, (velocityX, velocityY))))
                         # Check for failure
 
                         # Car hits wall
@@ -126,26 +126,26 @@ class MDP:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         # Car hits neither
                         else:
-                            finalStates.append((self.mdpLow, (position, state[1])))
+                            finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
                     # Stop when hitting Wall Crash Type
                     else:
-                        # Car hits wall or finish
+                        # Car hits wall
                         if value == -1:
                             finalStates.append((self.mdpHigh, (state[0], (0, 0))))
-                        if value == 0:
+                        elif value == 0:
                             finalStates.append((self.mdpHigh, (position, (0, 0))))
                         # Car hits neither
                         else:
-                            finalStates.append((self.mdpHigh, ((sToSPrimeX, sToSPrimeY), (velocityX, velocityY))))
+                            finalStates.append((self.mdpHigh, (position, (velocityX, velocityY))))
                         # Check for failure
 
-                        # Car hits wall or finish
+                        # Car hits wall
                         if value == -1:
                             finalStates.append((self.mdpLow, (state[0], (0, 0))))
-                        if value == 0:
+                        elif value == 0:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         else:
-                            finalStates.append((self.mdpLow, (position, state[1])))
+                            finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
 
                     action[(actionX, actionY)] = finalStates
                 self.transitions[state] = action
