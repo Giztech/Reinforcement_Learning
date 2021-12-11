@@ -44,8 +44,9 @@ class MDP:
         return self.reward[state]
 
     def Actions(self, state):
-        #print(state)
-        #print(self.transitions[tuple(0,0)])
+        """
+        Return all actions of a state
+        """
         return self.transitions[state]
 
     def setOtherRewards(self, track):
