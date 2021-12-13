@@ -14,7 +14,7 @@ class MDP:
         self.start = start
         self.otherRewards = {}
         self.setOtherRewards(track)
-        self.discount = 1  # TUNE <1
+        self.discount = .1  # TUNE <1
         self.mdpHigh = .7 # TUNE
         self.mdpLow = .3 # TUNE
         self.reward = {}
