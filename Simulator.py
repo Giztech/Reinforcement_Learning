@@ -17,8 +17,8 @@ class Simulator:
         self.start = start
         self.velocity = velocity
         self.timestep = 0
-        self.position = rand.choice(start)
-        self.lastPos = self.position
+        self.position = rand.choice(self.start).copy()
+        self.lastPos = self.position.copy()
         # reward is initially -1 because starting is -1
         self.reward = 0
 
@@ -27,7 +27,7 @@ class Simulator:
         self.velocity = [0, 0]
 
     def restartBeginning(self):
-        self.position = random.choice(self.start)
+        self.position = rand.choice(self.start).copy()
         self.velocity = [0, 0]
 
     #  nondeterminism bby
