@@ -75,6 +75,9 @@ class MDP:
 
     # this creates the valid state, velocity pairs
     def setStatesVi(self):
+        """
+        Designate the States in the track used for Value Iteration
+        """
         validlocations = []
         for loc in self.locations:
             rew = self.otherRewards[loc]
@@ -84,6 +87,9 @@ class MDP:
         self.statesvi = list(itertools.product(validlocations, self.velocities))
 
     def setMDP(self, crashnburn=False):
+        """
+        Given all state action pairs create an MDP with all transitions and states
+        """
         actions = [-1, 0, 1]
         for state in self.statesvi:
             action = {}

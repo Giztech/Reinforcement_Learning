@@ -3,6 +3,11 @@ class ValueIteration:
         pass
 
     def valueIteration(self, MDP, epsilon=0.01):
+        """
+        Value Iteration Algorithm that replicates the Bellman Equation by maximizing both sides of the Utility Function
+        """
+
+
         # Copies all states into Utility Function
         Util1 = {s: 0 for s in MDP.statesvi}
         Rewards, Transitions, discount = MDP.Rewards, MDP.Transitions, MDP.discount
@@ -21,6 +26,9 @@ class ValueIteration:
                     return Util
 
     def maximizePolicy(self, MDP, U):
+        """
+        Given the MDP and the Utility Function find an optimal policy
+        """
         policy = {}
         # print(U)
         for s in MDP.statesvi:
