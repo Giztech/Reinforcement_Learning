@@ -26,6 +26,7 @@ class ValueIteration:
     def maximizePolicy(self, MDP, U):
         policy = {}
         for s in MDP.statesvi:
+
             policy[s] = max(MDP.Actions(s), key=lambda a: self.utilityValue(a, s, U, MDP))
         return policy
 

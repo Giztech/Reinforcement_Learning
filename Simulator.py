@@ -1,16 +1,15 @@
 import copy
-from SARSA import SARSA
+import random
+
 from ValueIteration import ValueIteration
-from TrackImporter import TrackImporter
 from SARSA import SARSA
-from MDP import MDP
 import random as rand
 import math
 
 
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
-    def __init__(self, track, start, MDP, size,finish, crashnburn):
+    def __init__(self, track, start, velocity, MDP, size, crashnburn):
         self.size = size
         self.crashnburn = crashnburn
         self.mdp = MDP
@@ -18,11 +17,10 @@ class Simulator:
         self.start = start
         self.velocity = [0, 0]
         self.timestep = 0
-        self.position = rand.choice(start)
-        self.lastPos = self.position
+        self.position = rand.choice(self.start).copy()
+        self.lastPos = self.position.copy()
         # reward is initially -1 because starting is -1
         self.reward = 0
-        self.finish = finish
 
 
     def restartLastPos(self):
@@ -30,7 +28,7 @@ class Simulator:
         self.velocity = [0, 0]
 
     def restartBeginning(self):
-        self.position = self.start
+        self.position = rand.choice(self.start).copy()
         self.velocity = [0, 0]
 
     #  nondeterminism bby
@@ -51,7 +49,6 @@ class Simulator:
 
     def movePos(self, acceleration):
         self.timestep += 1
-        print('before', self.position, self.velocity)
         self.lastPos = self.position.copy()
         #print('lastpos', self.lastPos)
 
@@ -64,7 +61,6 @@ class Simulator:
         self.position[0] += self.velocity[0]
         self.position[1] += self.velocity[1]
         #print('lastposlaster', self.lastPos, self.position)
-        print('after', self.position, self.velocity)
         i = self.lastPos[0]
         inew = self.position[0]
         j = self.lastPos[1]
@@ -81,8 +77,6 @@ class Simulator:
 
         if not undef:
             b = i - slope * j
-
-            print("b", b, 'slope', slope)
             if abs(i - inew) > 2:
                 if i < inew:
                     # so this is numbers between last i pos and next i pos
@@ -111,12 +105,10 @@ class Simulator:
         # print('velocity', self.velocity)
         # print('action',acceleration)
         for p in unique_pairs:
-            print('pair ', p)
 
             # look at new rewards function and see if this works because of things
             # also, rounding? round up always...(?)
             temp_reward = self.mdp.OtherRewards(p)
-            print(temp_reward, p)
             if temp_reward == -10:
                 if self.crashnburn is True:
                     self.restartBeginning()
@@ -138,11 +130,11 @@ class Simulator:
         # iterate over stuff until
         while True:
             state = (tuple(self.position), tuple(self.velocity))
-            print(state)
             if self.makeAction():
                 accelerate = sarsa.sarsa(state, newReward)
                 newReward = self.movePos(accelerate)
-                print(newReward)
+            else:
+                newReward = self.movePos((0, 0))
 
     def callValueIteration(self):
         vi = ValueIteration()

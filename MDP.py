@@ -146,7 +146,6 @@ class MDP:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         else:
                             finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
-                    # print(position, value, finalStates)
                     action[(actionX, actionY)] = finalStates
                 self.transitions[state] = action
 
