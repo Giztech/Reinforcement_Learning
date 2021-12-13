@@ -7,7 +7,6 @@ from MDP import MDP
 import random as rand
 import math
 
-
 class Simulator:
     #  restartStart should be False for every track, except R track for the comparison
     def __init__(self, track, start, MDP, size, crashnburn):

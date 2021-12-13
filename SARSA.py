@@ -31,4 +31,3 @@ class SARSA:
         else:
             action = random.choice(self.mdp.actions)
         return tuple(action)
-
