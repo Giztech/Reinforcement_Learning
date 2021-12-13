@@ -14,7 +14,7 @@ class MDP:
         self.start = start
         self.otherRewards = {}
         self.setOtherRewards(track)
-        self.discount = .1  # TUNE <1
+        self.discount = 1  # TUNE <1
         self.mdpHigh = .7 # TUNE
         self.mdpLow = .3 # TUNE
         self.reward = {}
@@ -146,6 +146,7 @@ class MDP:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         else:
                             finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
+                    # print(position, value, finalStates)
                     action[(actionX, actionY)] = finalStates
                 self.transitions[state] = action
 
