@@ -11,10 +11,10 @@ def main():
     sim = Simulator(track, start, mdp, size, False)
 
     #im.print_track()
-    #sim.goSARSA()
+    sim.goSARSA()
 
 
-    sim.callValueIteration()
+    #sim.callValueIteration()
 
 if __name__ == '__main__':
     main()
