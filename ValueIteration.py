@@ -19,13 +19,19 @@ class ValueIteration:
 
                     Util1[s] = Rewards(s) + discount * max([sum([p * Util[s1] for (p, s1) in Transitions(s, a)])])
                     delta = max(delta, abs(Util1[s] - Util[s]))
+
                 if delta <= epsilon * (1 - discount) / discount:
                     return Util
 
     def maximizePolicy(self, MDP, U):
         policy = {}
         for s in MDP.statesvi:
-            policy[s] = max(MDP.Actions(s), key=lambda a: sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a)))
+
+            policy[s] = max(MDP.Actions(s), key=lambda a: self.utilityValue(a, s, U, MDP))
         return policy
 
+    def utilityValue(self, a, s, U, MDP):
+        return sum(p * U[s1] for (p, s1) in MDP.Transitions(s, a))
 
+
+# ((1, 32), (-1, 3))

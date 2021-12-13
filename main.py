@@ -14,7 +14,7 @@ def main():
     sim.goSARSA()
 
 
-    #sim.callValueIteration()
+    sim.callValueIteration()
 
 if __name__ == '__main__':
     main()

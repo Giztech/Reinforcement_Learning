@@ -14,7 +14,7 @@ class MDP:
         self.start = start
         self.otherRewards = {}
         self.setOtherRewards(track)
-        self.discount = 1  # TUNE <1
+        self.discount = .1  # TUNE <1
         self.mdpHigh = .7 # TUNE
         self.mdpLow = .3 # TUNE
         self.reward = {}
@@ -146,7 +146,6 @@ class MDP:
                             finalStates.append((self.mdpLow, (position, (0, 0))))
                         else:
                             finalStates.append((self.mdpLow, (position, (velocityX, velocityY))))
-
                     action[(actionX, actionY)] = finalStates
                 self.transitions[state] = action
 
@@ -205,12 +204,15 @@ class MDP:
         for p in unique_pairs:
             temp_reward = self.OtherRewards(p)
             if temp_reward == -10:
+                # print(p, temp_reward)
                 # if it hits a wall
                 return newPos, -1
             elif temp_reward == 0:
+                # print(p, temp_reward)
                 # if it passes the finish line!
-                return newPos, 0
+                return p, 0
         # if it just continues along the path, like the good little car that it should be
+        # print(newPos, 1)
         return newPos, 1
 
     #  check to make sure an action is possible (acceleration is okay and the new position would be on the board)
@@ -223,14 +225,5 @@ class MDP:
         # elif newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
         #     # if the new acceleration takes it off the board, return false
         #     return False
-        else:
-            return True
-
-    def checkOffBoard(self, accel, velocity, currpos):
-        newaccel = (velocity[0] + accel[0], velocity[1] + accel[1])
-        newpos = (currpos[0] + newaccel[0], currpos[1] + newaccel[1])
-        if newpos[0] >= int(self.size[0]) or newpos[1] >= int(self.size[1]) or newpos[0] < 0 or newpos[1] < 0:
-            # if the new acceleration takes it off the board, return false
-            return False
         else:
             return True

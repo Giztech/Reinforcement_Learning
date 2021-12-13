@@ -15,12 +15,13 @@ class Simulator:
         self.mdp = MDP
         self.track = track
         self.start = start
-        self.velocity = velocity
+        self.velocity = [0, 0]
         self.timestep = 0
         self.position = rand.choice(self.start).copy()
         self.lastPos = self.position.copy()
         # reward is initially -1 because starting is -1
         self.reward = 0
+
 
     def restartLastPos(self):
         self.position = self.lastPos
@@ -137,7 +138,10 @@ class Simulator:
 
     def callValueIteration(self):
         vi = ValueIteration()
-        vi.maximizePolicy(self.mdp, vi.valueIteration(self.mdp))
+        vi.valueIteration(self.mdp)
+
+
+
 
     def print_track(self):
         rTrack = copy.deepcopy(self.track)
@@ -149,4 +153,4 @@ class Simulator:
                     print('', p, end='')
                 else:
                     print(p, end='')
-            print('\n')
+            print('')
