@@ -19,7 +19,7 @@ class SARSA:
         while True:
             currAction = self.chooseAction(currState)
             if self.mdp.checkAction(currAction, currState[1], currState[0]):
-                if self.s != None and not self.mdp.checkOffBoard(currAction, currState[1], currState[0]):
+                if self.s != None:
                     self.Q[self.s][self.a] += self.learningRate * (reward + (self.discountFactor * self.Q[currState][currAction]) - self.Q[self.s][self.a])
                 self.s = currState
                 self.a = currAction
